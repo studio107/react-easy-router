@@ -57,3 +57,12 @@ render((
     </Provider>
 ), document.getElementById('app'));
 ```
+
+Build url:
+```js
+import { Link } from 'react-easy-router';
+
+...
+
+<Link to="UserView" params={{user_id: 1}} className="user-link" {...props}>Text</Link>
+```
