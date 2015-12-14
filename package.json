@@ -2,7 +2,7 @@
   "name": "react-easy-router",
   "description": "Easy and lightweight react router",
   "author": "Maxim Falaleev <max@studio107.ru> (http://studio107.ru)",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "main": "lib/index.js",
   "license": "MIT",
   "scripts": {
@@ -20,15 +20,16 @@
     "small"
   ],
   "bugs": "https://github.com/studio107/react-easy-router/issues",
+  "dependencies": {
+    "query-string": ">=3.0.0",
+    "react": ">=0.14",
+    "route-parser": "0.0.4",
+    "url-join": ">=0.0.1"
+  },
   "devDependencies": {
     "babel-cli": "^6.3.17",
     "babel-core": "^6.3.17",
     "babel-plugin-transform-react-jsx": "^6.3.13",
-    "lodash": ">=3",
-    "query-string": ">=3.0.0",
-    "react": ">=0.14",
-    "route-parser": "0.0.4",
-    "url-join": ">=0.0.1",
     "webpack": "^1.12.9"
   }
 }
