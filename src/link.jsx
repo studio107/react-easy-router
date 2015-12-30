@@ -18,7 +18,9 @@ export default class Link extends Component {
 
     handleClick(url, e) {
         e.preventDefault();
-        this.props.onClick();
+        if (this.props.onClick instanceof Function) {
+            this.props.onClick();
+        }
         this.getRouter().navigate(url);
     }
 
