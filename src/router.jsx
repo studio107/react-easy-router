@@ -47,7 +47,7 @@ export default class Router extends Component {
     }
 
     navigate(url) {
-        this.props.history.pushState(null, url);
+        this.props.history.push(null, url);
     }
 
     createRoutes() {
