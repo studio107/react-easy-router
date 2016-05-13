@@ -47,46 +47,45 @@ export default class Router extends Component {
     }
 
     navigate(url) {
-        this.props.history.push(null, url);
+        this.props.history.push({
+            pathname: url
+        });
     }
 
     createRoutes() {
         const { routes } = this.props;
         for (let name in routes) {
             let { path, component, wrapper } = routes[name];
-            store.set(name, {route: new Route(path), component, wrapper});
+            store.set(name, {
+                route: new Route(path),
+                component,
+                wrapper
+            });
         }
     }
 
     urlFromLocation(location) {
         if (location.search.length > 0) {
-            return urlJoin('/', location.pathname, location.search);
+            return urlJoin(location.pathname, location.search);
         } else {
-            return urlJoin('/', location.pathname);
+            return urlJoin(location.pathname);
         }
     }
 
     parseUrl(url) {
         let routes = store.all();
-        for (let name in routes) {
-            let { route, component, wrapper } = routes[name];
 
-            let params = route.match(url);
+        for (let name in routes) {
+            let { route, component, wrapper } = routes[name],
+                params = route.match(url);
+
             if (params) {
-                return {
-                    params,
-                    component,
-                    wrapper
-                };
+                return {params, component, wrapper};
             }
         }
 
         if (this.props.notFound) {
-            return {
-                params: {},
-                component: this.props.notFound,
-                wrapper: null
-            };
+            return {params: {}, component: this.props.notFound, wrapper: null};
         } else {
             throw new Error('Unknown route');
         }
@@ -113,16 +112,14 @@ export default class Router extends Component {
 
     render() {
         const { route, location } = this.state;
-        let query = Qs.parse(location.search.substring(1));
-        let newLocation = {
-            ...location,
-            query: query
-        };
-        let props = {
-            params: route.params,
-            query: query,
-            location: newLocation
-        };
+
+        let query = Qs.parse(location.search.substring(1)),
+            newLocation = {...location, query: query},
+            props = {
+                params: route.params,
+                query: query,
+                location: newLocation
+            };
 
         if (route.wrapper) {
             let children = React.createElement(route.component, props);

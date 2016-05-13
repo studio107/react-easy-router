@@ -13,7 +13,8 @@ export default class Link extends Component {
     };
 
     static defaultProps = {
-        onClick: (e) => {}
+        onClick: (e) => {
+        }
     };
 
     handleClick(url, e) {
@@ -35,9 +36,7 @@ export default class Link extends Component {
     render() {
         const { to, params, query } = this.props;
         let url = this.getRouter().reverse(to, params, query);
-        return <a
-            {...this.props}
-            onClick={this.handleClick.bind(this, url)}
-            href={url}>{this.props.children}</a>;
+        return <a {...this.props} onClick={this.handleClick.bind(this, url)}
+                                  href={url}>{this.props.children}</a>;
     }
 }

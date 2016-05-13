@@ -9,11 +9,7 @@ let reverse = (to, params = {}, query = {}) => {
     params = params || {};
     query = query || {};
 
-    let queryString = '';
-    if (Object.keys(query).length) {
-        queryString = '?' + Qs.stringify(query);
-    }
-
+    let queryString = Object.keys(query).length ? '?' + Qs.stringify(query) : '';
     let { route } = store.get(to);
     return route.reverse(params) + queryString;
 };
