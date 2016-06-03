@@ -20,6 +20,7 @@ export default class Router extends Component {
     };
 
     state = {
+        location: undefined,
         route: {
             component: null,
             wrapper: null,
@@ -30,6 +31,31 @@ export default class Router extends Component {
     static childContextTypes = {
         router: PropTypes.object
     };
+
+    componentWillUnmount() {
+        this._unlisten();
+    }
+
+    componentWillMount() {
+        this.createRoutes();
+        const { history } = this.props;
+
+        const currentLocation = history.getCurrentLocation();
+        this.setState({
+            location: currentLocation,
+            route: this.parseUrl(this.urlFromLocation(currentLocation))
+        });
+
+        this._unlisten = history.listen(location => {
+            if (this.props.historyCallback) {
+                this.props.historyCallback();
+            }
+            this.setState({
+                location,
+                route: this.parseUrl(this.urlFromLocation(location))
+            });
+        });
+    }
 
     getChildContext() {
         return {
@@ -77,37 +103,26 @@ export default class Router extends Component {
 
         for (let name in routes) {
             let { route, component, wrapper } = routes[name],
-                params = route.match(url);
+                params = route.match(url.charAt(0) == '/' ? url : '/' + url);
 
             if (params) {
-                return {params, component, wrapper};
+                return {
+                    params,
+                    component,
+                    wrapper
+                };
             }
         }
 
         if (this.props.notFound) {
-            return {params: {}, component: this.props.notFound, wrapper: null};
+            return {
+                params: {},
+                component: this.props.notFound,
+                wrapper: null
+            };
         } else {
             throw new Error('Unknown route');
         }
-    }
-
-    componentWillUnmount() {
-        this._unlisten();
-    }
-
-    componentWillMount() {
-        this.createRoutes();
-
-        const { history } = this.props;
-        this._unlisten = history.listen(location => {
-            if (this.props.historyCallback) {
-                this.props.historyCallback();
-            }
-            this.setState({
-                location,
-                route: this.parseUrl(this.urlFromLocation(location))
-            });
-        });
     }
 
     render() {
