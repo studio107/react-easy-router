@@ -11,20 +11,12 @@ export default class Router extends Component {
     static propTypes = {
         history: PropTypes.object.isRequired,
         routes: PropTypes.object.isRequired,
-        notFound: PropTypes.func
-    };
-
-    static defaultProps = {
-        notFound: null
+        fallback: PropTypes.func
     };
 
     state = {
         location: undefined,
-        route: {
-            component: null,
-            wrapper: null,
-            params: {}
-        }
+        route: {}
     };
 
     static childContextTypes = {
@@ -100,40 +92,36 @@ export default class Router extends Component {
                 params = route.match(url);
 
             if (params) {
-                return {
-                    params,
-                    component,
-                    wrapper
-                };
+                return {params, component, wrapper};
             }
         }
 
-        if (this.props.notFound) {
-            return {
-                params: {},
-                component: this.props.notFound,
-                wrapper: null
-            };
-        } else {
-            throw new Error('Unknown route');
-        }
+        return null;
     }
 
     render() {
+        const { fallback } = this.props;
         const { route, location } = this.state;
 
         let query = Qs.parse(location.search.substring(1)),
             props = {
-                params: route.params,
-                query: query,
+                query,
+                // Backward for react-router
                 location: {...location, query: query}
             };
+        if (route) {
+            props = {...props, params: route.params};
 
-        if (route.wrapper) {
-            let children = React.createElement(route.component, props);
-            return React.createElement(route.wrapper, props, children);
+            if (route.wrapper) {
+                return React.createElement(route.wrapper, props,
+                    React.createElement(route.component, props));
+            } else {
+                return React.createElement(route.component, props);
+            }
+        } else if (fallback) {
+            return fallback(props);
         } else {
-            return React.createElement(route.component, props);
+            return <div>Unknown route</div>;
         }
     }
 }
