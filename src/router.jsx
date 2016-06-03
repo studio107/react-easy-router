@@ -11,8 +11,7 @@ export default class Router extends Component {
     static propTypes = {
         history: PropTypes.object.isRequired,
         routes: PropTypes.object.isRequired,
-        notFound: PropTypes.func,
-        historyCallback: PropTypes.func
+        notFound: PropTypes.func
     };
 
     static defaultProps = {
@@ -47,9 +46,6 @@ export default class Router extends Component {
         });
 
         this._unlisten = history.listen(location => {
-            if (this.props.historyCallback) {
-                this.props.historyCallback();
-            }
             this.setState({
                 location,
                 route: this.parseUrl(this.urlFromLocation(location))
@@ -73,9 +69,7 @@ export default class Router extends Component {
     }
 
     navigate(url) {
-        this.props.history.push({
-            pathname: url
-        });
+        this.props.history.push(url);
     }
 
     createRoutes() {
@@ -103,7 +97,7 @@ export default class Router extends Component {
 
         for (let name in routes) {
             let { route, component, wrapper } = routes[name],
-                params = route.match(url.charAt(0) == '/' ? url : '/' + url);
+                params = route.match(url);
 
             if (params) {
                 return {
@@ -129,11 +123,10 @@ export default class Router extends Component {
         const { route, location } = this.state;
 
         let query = Qs.parse(location.search.substring(1)),
-            newLocation = {...location, query: query},
             props = {
                 params: route.params,
                 query: query,
-                location: newLocation
+                location: {...location, query: query}
             };
 
         if (route.wrapper) {
