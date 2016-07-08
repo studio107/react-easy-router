@@ -34,9 +34,13 @@ export default class Link extends Component {
     }
 
     render() {
-        const { to, params, query } = this.props;
+        const { to, params, query, children } = this.props;
+        let props = this.props;
+        delete props['to'];
+        delete props['params'];
+        delete props['query'];
         let url = this.getRouter().reverse(to, params, query);
-        return <a {...this.props} onClick={this.handleClick.bind(this, url)}
-                                  href={url}>{this.props.children}</a>;
+        return <a {...props} onClick={this.handleClick.bind(this, url)}
+                                  href={url}>{children}</a>;
     }
 }
