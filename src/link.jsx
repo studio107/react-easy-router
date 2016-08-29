@@ -35,7 +35,7 @@ export default class Link extends Component {
 
     render() {
         const { to, params, query, children } = this.props;
-        let props = this.props;
+        let props = {...this.props};
         delete props['to'];
         delete props['params'];
         delete props['query'];
