@@ -25,7 +25,7 @@ export function findMatch(path, routes) {
     return null;
 }
 
-export default (url, props, routes) => {
+export function handle(url, props, routes) {
     const config = findMatch(url, routes);
     if (!config) {
         return null;

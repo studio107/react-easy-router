@@ -1,7 +1,5 @@
-'use strict';
-
 import { renderToStaticMarkup } from 'react-dom/server';
-import { handle, findMatch } from '../router';
+import { handle, findMatch } from './handle';
 import { Helmet } from 'react-helmet';
 
 export function batchRender(urls = [], routes = {}) {
