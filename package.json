@@ -26,6 +26,7 @@
         "react": ">=0.14",
         "react-dom": "^15.5.4",
         "route-parser": "0.0.5",
+        "shallowequal": "^0.2.2",
         "urljoin": "^0.1.5"
     },
     "devDependencies": {

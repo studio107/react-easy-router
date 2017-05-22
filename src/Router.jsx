@@ -1,11 +1,9 @@
-import React, { createElement, Component } from 'react';
+import React, { Children, createElement, Component } from 'react';
 import PropTypes from 'prop-types';
-import Route from 'route-parser';
-import Qs from 'query-string';
 import urljoin from 'urljoin';
-import { handle } from './handle';
+import shallowequal from 'shallowequal';
 import store from './store';
-import { reverse } from './utils';
+import { defaultProps, handle, reverse } from './utils';
 
 export default class Router extends Component {
     _unlisten = null;
@@ -19,51 +17,59 @@ export default class Router extends Component {
 
     state = {
         location: undefined,
-        route: {}
+        url: '/'
     };
 
     static childContextTypes = {
         router: PropTypes.object
     };
 
+    componentWillMount() {
+        const {
+            history,
+            routes
+        } = this.props;
+
+        store.set(routes);
+
+        this.parseLocation(history.location);
+
+        this._unlisten = history.listen(location => {
+            this.parseLocation(location);
+        });
+    }
+
+    componentWillReceiveProps(nextProps) {
+        const { routes } = nextProps;
+
+        if (false === shallowequal(routes, this.props.routes)) {
+            store.set(routes);
+        }
+
+        // TODO add redux version for v3
+        /*
+         const { location } = nextProps;
+         if (false === shallowequal(location, this.props.location)) {
+             this.parseLocation(location);
+         }
+         */
+    }
+
     componentWillUnmount() {
         this._unlisten();
     }
 
-    componentWillMount() {
-        this.createRoutes();
+    parseLocation(location) {
+        const { historyCallback } = this.props;
 
-        const { history, historyCallback } = this.props;
-
-        const currentLocation = history.location;
-
-        let url = this.urlFromLocation(currentLocation);
         this.setState({
-            location: currentLocation,
-            route: this.parseUrl(url)
+            location,
+            url: urljoin(location.pathname, location.search)
         }, () => {
             if (historyCallback) {
                 historyCallback(url);
             }
         });
-
-        this._unlisten = history.listen(location => {
-
-            let url = this.urlFromLocation(location);
-
-            this.setState({
-                location,
-                route: this.parseUrl(url)
-            }, () => {
-                if (historyCallback) {
-                    historyCallback(url);
-                }
-            });
-        });
-    }
-
-    getHistory() {
-        return this.props.history;
     }
 
     getChildContext() {
@@ -85,56 +91,21 @@ export default class Router extends Component {
         this.props.history.push(url);
     }
 
-    createRoutes() {
-        const { routes } = this.props;
-
-        for (let name in routes) {
-            let { path, component, wrapper } = routes[name];
-            store.set(name, {
-                route: new Route(path),
-                component,
-                wrapper
-            });
-        }
-    }
-
-    urlFromLocation(location) {
-        return urljoin(location.pathname, location.search);
-    }
-
-    parseUrl(url) {
-        let routes = store.all();
-
-        for (let name in routes) {
-            let { route, component, wrapper } = routes[name],
-                params = route.match(url);
-
-            if (params) {
-                return { params, component, wrapper };
-            }
-        }
-
-        return null;
-    }
-
     render() {
-        const { fallback } = this.props;
-        const { route, location } = this.state;
+        const {
+            fallback,
+            routes,
+            children
+        } = this.props;
 
-        let query = Qs.parse(location.search.substring(1)),
-            props = { params: {}, query };
+        const component = handle(this.state.url, {}, this.props.routes);
 
-        // TODO use me handle(url, props, this.props.routes);
-        if (route) {
-            props = { ...props, params: route.params };
-
-            return createElement(
-                route.wrapper ? route.wrapper : route.component,
-                props,
-                route.wrapper ? createElement(route.component, props) : null
-            );
+        if (component) {
+            return component;
         } else if (fallback) {
-            return fallback(props);
+            return fallback(defaultProps);
+        } else if (Children.toArray(children).length > 0) {
+            return children;
         } else {
             return <div>Unknown route</div>;
         }

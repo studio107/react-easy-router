@@ -1,5 +1,5 @@
 import { renderToStaticMarkup } from 'react-dom/server';
-import { handle, findMatch } from './handle';
+import { handle } from './utils';
 import { Helmet } from 'react-helmet';
 
 export function batchRender(urls = [], routes = {}) {
