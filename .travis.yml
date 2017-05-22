@@ -1,1 +1,7 @@
-script: yarn coverage
+language: node_js
+cache:
+    yarn: true
+before_install:
+    - yarn
+script:
+    - yarn test
