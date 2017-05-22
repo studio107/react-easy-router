@@ -1,8 +1,9 @@
-import React, { Component } from 'react';
+import React, { createElement, Component } from 'react';
 import PropTypes from 'prop-types';
 import Route from 'route-parser';
 import Qs from 'query-string';
 import urljoin from 'urljoin';
+import { handle } from './handle';
 import store from './store';
 import { reverse } from './utils';
 
@@ -61,6 +62,10 @@ export default class Router extends Component {
         });
     }
 
+    getHistory() {
+        return this.props.history;
+    }
+
     getChildContext() {
         return {
             router: {
@@ -82,6 +87,7 @@ export default class Router extends Component {
 
     createRoutes() {
         const { routes } = this.props;
+
         for (let name in routes) {
             let { path, component, wrapper } = routes[name];
             store.set(name, {
@@ -118,6 +124,7 @@ export default class Router extends Component {
         let query = Qs.parse(location.search.substring(1)),
             props = { params: {}, query };
 
+        // TODO use me handle(url, props, this.props.routes);
         if (route) {
             props = { ...props, params: route.params };
 

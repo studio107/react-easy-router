@@ -6,9 +6,6 @@ export function reverse(to, params = {}, query = {}) {
         throw new Error('Route cannot be empty');
     }
 
-    params = params || {};
-    query = query || {};
-
     let queryString = Object.keys(query).length ? '?' + Qs.stringify(query) : '';
     let { route } = store.get(to);
     return route.reverse(params) + queryString;
