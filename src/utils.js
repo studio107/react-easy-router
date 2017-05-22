@@ -1,16 +1,22 @@
 import Qs from 'query-string';
 import store from './store';
 import { createElement } from 'react';
-import Route from 'route-parser';
+import UrlPattern from 'url-pattern';
 
 export const defaultProps = {
     params: {},
     query: {},
 };
 
+function createRoute(path) {
+    return new UrlPattern(path, {
+        segmentNameCharset: 'a-zA-Z0-9_-'
+    });
+}
+
 export function findMatch(path, routes) {
     for (let name in routes) {
-        const route = new Route(routes[name].path);
+        const route = createRoute(routes[name].path);
 
         const params = route.match(path);
         if (!params) {
@@ -51,5 +57,6 @@ export function reverse(to, params = {}, query = {}) {
 
     let queryString = Object.keys(query).length ? '?' + Qs.stringify(query) : '';
     let { path } = store.get(to);
-    return (new Route(path)).reverse(params) + queryString;
+
+    return createRoute(path).stringify(params) + queryString;
 }

@@ -67,7 +67,7 @@ export default class Router extends Component {
             url: urljoin(location.pathname, location.search)
         }, () => {
             if (historyCallback) {
-                historyCallback(url);
+                historyCallback(this.state.url);
             }
         });
     }

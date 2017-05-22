@@ -7,5 +7,17 @@
     "transform-decorators-legacy",
     "transform-object-rest-spread",
     "transform-class-properties"
-  ]
+  ],
+  "env": {
+    "production": {
+      "ignore": [
+        "**/*.test.js"
+      ]
+    },
+    "nyc": {
+      "plugins": [
+        "istanbul"
+      ]
+    }
+  }
 }
