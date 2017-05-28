@@ -1,5 +1,6 @@
 import { renderToStaticMarkup } from 'react-dom/server';
 import { handle } from './utils';
+import store from './store';
 import { Helmet } from 'react-helmet';
 
 export function batchRender(urls = [], routes = {}) {
@@ -37,6 +38,8 @@ export function fetchProps(props) {
 }
 
 export function render(url, props, routes) {
+    store.set(routes);
+
     const component = handle(url, fetchProps(props), routes);
 
     if (!component) {
