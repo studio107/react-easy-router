@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { reverse, createRoute } from './utils';
+import { reverse, findMatch, createRoute } from './utils';
 import store from './store';
 import UrlPattern from 'url-pattern';
 
@@ -27,5 +27,14 @@ describe('utils', () => {
             url = '/user?page=1';
 
         expect(route.match(url.split('?')[0])).to.be.deep.equal({});
+    });
+
+    it('find match from routes', () => {
+        store.set({
+            user_list: { path: '/user' }
+        });
+        const config = findMatch('/user?page=1&q=qwe', store.all());
+
+        expect(config.query).to.be.deep.equal({ page: "1", q: "qwe" });
     });
 });

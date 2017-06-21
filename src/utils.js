@@ -20,10 +20,14 @@ export function createRoute(path, options = {}) {
 }
 
 export function findMatch(path, routes) {
+    const [ rawPath, rawQuery ] = path.split('?');
+
+    const query = Qs.parse(rawQuery);
+
     for (let name in routes) {
         const route = createRoute(routes[name].path);
 
-        const params = route.match(path.split('?')[0]);
+        const params = route.match(rawPath);
         if (null === params) {
             continue;
         }
@@ -32,6 +36,7 @@ export function findMatch(path, routes) {
             ...routes[name],
             name,
             params,
+            query
         };
     }
 
@@ -47,7 +52,11 @@ export function handle(url, props, routes) {
 
     let { component, wrapper, params } = config;
 
-    props = { ...defaultProps, ...props, params };
+    props = {
+        ...defaultProps,
+        ...props,
+        params,
+    };
 
     return createElement(
         wrapper ? wrapper : component,
