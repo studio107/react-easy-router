@@ -50,12 +50,13 @@ export function handle(url, props, routes) {
         return null;
     }
 
-    let { component, wrapper, params } = config;
+    let { component, wrapper, params, query } = config;
 
     props = {
         ...defaultProps,
         ...props,
         params,
+        query
     };
 
     return createElement(
