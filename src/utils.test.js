@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { reverse } from './utils';
+import { reverse, createRoute } from './utils';
 import store from './store';
 import UrlPattern from 'url-pattern';
 
@@ -20,5 +20,12 @@ describe('utils', () => {
         });
 
         expect(reverse('user_view', { user_id: 1 })).to.be.equal('/user/1')
+    });
+
+    it('find match', () => {
+        let route = createRoute('/user'),
+            url = '/user?page=1';
+
+        expect(route.match(url.split('?')[0])).to.be.deep.equal({});
     });
 });

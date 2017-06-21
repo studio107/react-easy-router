@@ -3,14 +3,19 @@ import store from './store';
 import { createElement } from 'react';
 import UrlPattern from 'url-pattern';
 
+const defaultOptions = {
+    segmentNameCharset: 'a-zA-Z0-9_-'
+};
+
 export const defaultProps = {
     params: {},
     query: {},
 };
 
-function createRoute(path) {
+export function createRoute(path, options = {}) {
     return new UrlPattern(path, {
-        segmentNameCharset: 'a-zA-Z0-9_-'
+        ...defaultOptions,
+        ...options
     });
 }
 
@@ -18,8 +23,8 @@ export function findMatch(path, routes) {
     for (let name in routes) {
         const route = createRoute(routes[name].path);
 
-        const params = route.match(path);
-        if (!params) {
+        const params = route.match(path.split('?')[0]);
+        if (null === params) {
             continue;
         }
 
@@ -35,7 +40,8 @@ export function findMatch(path, routes) {
 
 export function handle(url, props, routes) {
     const config = findMatch(url, routes);
-    if (!config) {
+
+    if (null === config) {
         return null;
     }
 
@@ -56,7 +62,6 @@ export function reverse(to, params = {}, query = {}) {
     }
 
     let queryString = Object.keys(query).length ? '?' + Qs.stringify(query) : '';
-    let { path } = store.get(to);
 
-    return createRoute(path).stringify(params) + queryString;
+    return createRoute(store.get(to).path).stringify(params) + queryString;
 }
