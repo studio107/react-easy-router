@@ -68,7 +68,7 @@ export function handle(url, props, routes) {
 
 export function reverse(to, params = {}, query = {}) {
     if (!to || to.length === 0) {
-        throw new Error('Route cannot be empty');
+        return '';
     }
 
     let queryString = Object.keys(query).length ? '?' + Qs.stringify(query) : '';
