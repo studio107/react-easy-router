@@ -5,6 +5,8 @@ import shallowequal from 'shallowequal';
 import store from './store';
 import { defaultProps, handle, reverse } from './utils';
 
+const isServer = typeof window === 'undefined';
+
 export default class Router extends Component {
     _unlisten = null;
 
@@ -36,9 +38,11 @@ export default class Router extends Component {
 
         this.parseLocation(history.location);
 
-        this._unlisten = history.listen(location => {
-            this.parseLocation(location);
-        });
+        if (false === isServer) {
+            this._unlisten = history.listen(location => {
+                this.parseLocation(location);
+            });
+        }
     }
 
     componentWillReceiveProps(nextProps) {
@@ -52,13 +56,15 @@ export default class Router extends Component {
         /*
          const { location } = nextProps;
          if (false === shallowequal(location, this.props.location)) {
-             this.parseLocation(location);
+         this.parseLocation(location);
          }
          */
     }
 
     componentWillUnmount() {
-        this._unlisten();
+        if (false === isServer) {
+            this._unlisten();
+        }
     }
 
     parseLocation(location) {
