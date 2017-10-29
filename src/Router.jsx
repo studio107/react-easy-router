@@ -12,10 +12,12 @@ export default class Router extends Component {
         history: PropTypes.object.isRequired,
         routes: PropTypes.object.isRequired,
         historyCallback: PropTypes.func,
-        fallback: PropTypes.func
+        fallback: PropTypes.func,
+        initialData: PropTypes.object,
     };
 
     state = {
+        initialData: {},
         location: undefined,
         url: '/'
     };
@@ -95,10 +97,11 @@ export default class Router extends Component {
         const {
             fallback,
             routes,
+            initialData,
             children
         } = this.props;
 
-        const component = handle(this.state.url, {}, this.props.routes);
+        const component = handle(this.state.url, initialData, this.props.routes);
 
         if (component) {
             return component;
