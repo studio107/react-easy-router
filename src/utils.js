@@ -25,7 +25,7 @@ export function findMatch(path, routes) {
     const query = Qs.parse(rawQuery);
 
     for (let name in routes) {
-        const route = createRoute(routes[name].path);
+        const route = createRoute(routes[name].path, routes[name].options);
 
         const params = route.match(rawPath);
         if (null === params) {
@@ -73,5 +73,6 @@ export function reverse(to, params = {}, query = {}) {
 
     let queryString = Object.keys(query).length ? '?' + Qs.stringify(query) : '';
 
-    return createRoute(store.get(to).path).stringify(params) + queryString;
+    const route = store.get(to)
+    return createRoute(route.path, route.options).stringify(params) + queryString;
 }

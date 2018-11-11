@@ -22,15 +22,25 @@ const routes = {
     page: {
         path: '/:foo',
         component: props => <div>Hello world</div>
-    }
+    },
+    pageWithOptions: {
+        path: '/:bar',
+        component: props => <div>Hello world</div>,
+        options: {segmentNameCharset: ',a-z'},
+    },
 };
 
 describe('<Link />', () => {
     const router = shallow(<Router history={history} routes={routes}/>);
 
-    it('render valid <Link /> component', () => {
+    it('renders valid <Link /> component', () => {
         const wrapper = shallow(<Link router={router} to="homepage"/>);
         expect(wrapper.prop('href')).to.equal('/');
+    });
+
+    it('renders <Link /> component with options', () => {
+        const wrapper = shallow(<Link router={router} to="pageWithOptions" params={{bar: "hello,world" }}/>);
+        expect(wrapper.prop('href')).to.equal('/hello,world');
     });
 
     it('renders children when passed in', () => {
