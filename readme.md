@@ -66,3 +66,21 @@ import { Link } from 'react-easy-router';
 
 <Link to="UserView" params={{user_id: 1}} className="user-link" {...props}>Text</Link>
 ```
+
+Specify [url-pattern](https://github.com/snd/url-pattern) options for URL
+matching:
+
+```js
+
+
+// Module route file: modules/user/routes.js
+
+import * as Handlers from './handlers';
+import { AppBase } from 'app';
+
+export default {
+    // Recognizes /user/ada.lovelace
+    UserView: {path: '/user/:name', options: {segmentValueCharset: '.a-z'},
+        component: Handlers.View, wrapper: AppBase},
+}
+```
