@@ -26,7 +26,7 @@ const routes = {
     pageWithOptions: {
         path: '/:bar',
         component: props => <div>Hello world</div>,
-        options: {segmentNameCharset: ',a-z'},
+        options: {segmentValueCharset: ',a-z'},
     },
 };
 
