@@ -29,6 +29,13 @@ describe('utils', () => {
         expect(route.match(url.split('?')[0])).to.be.deep.equal({});
     });
 
+    it('matches with segment value option', () => {
+        let route = createRoute('/segment-name/:bar', {segmentValueCharset: ',a-z'}),
+            url = '/segment-name/hello,world';
+
+        expect(route.match(url)).to.be.deep.equal({bar: 'hello,world'});
+    });
+
     it('find match from routes', () => {
         store.set({
             user_list: { path: '/user' }
